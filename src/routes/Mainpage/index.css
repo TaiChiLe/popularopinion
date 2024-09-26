@@ -37,6 +37,11 @@ body {
     margin-top: 20px;
 }
 
+.vote-icon-circle:hover {
+    cursor: pointer;
+    background-color: #9a9a9a;
+}
+
 .bi {
     margin-right: 10px;
 }
