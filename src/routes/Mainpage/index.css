@@ -26,6 +26,16 @@ body {
     color: red;
 }
 
+.bi-share-fill {
+    font-size: 25px;
+    color: black;
+}
+
+.bi-share-fill:hover {
+    cursor: pointer;
+    color: white;
+}
+
 .vote-icon {
     font-size: 50px;
 }
@@ -74,4 +84,10 @@ body {
 
 .ant-card-head {
     border-color: #2A2A2A !important;
+}
+
+.hour-text {
+    position: absolute;
+    left: 100px;
+    top: 40px
 }

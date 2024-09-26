@@ -1,4 +1,6 @@
-import { Card, Image, Space, Flex } from 'antd';
+import { Card, Image, Space, Flex, Avatar } from 'antd';
+import { AntDesignOutlined, UserOutlined } from '@ant-design/icons';
+import { Typography, Divider } from 'antd';
 
 function CardComponent(props) {
   const key = props.key;
@@ -11,15 +13,40 @@ function CardComponent(props) {
   return (
     <>
       <Card
-        title={question}
         style={{
           width: '90%',
           maxWidth: 600,
-          backgroundColor: '#bf684d',
-          borderColor: '#bf684d',
+          backgroundColor: '#6dd4c7',
+          borderColor: '#6dd4c7',
           color: 'white',
         }}
       >
+        <Flex justify="space-between">
+          <div>
+            <Flex gap="10px">
+              <Avatar
+                size="large"
+                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              />
+              <div>
+                <b>Tyson Le</b>
+              </div>
+              <div className="hour-text">1 Hour Ago</div>
+            </Flex>
+          </div>
+          <i class="bi bi-share-fill"></i>
+        </Flex>
+        <Divider style={{ margin: '10px' }}></Divider>
+        <Typography.Title
+          level={3}
+          style={{
+            color: 'white',
+            marginTop: '12px',
+          }}
+        >
+          {question}
+        </Typography.Title>
+        <div className="space"></div>
         {image ? (
           <Image width="100%" src={image} style={{ borderRadius: '10px' }} />
         ) : (
