@@ -10,6 +10,9 @@ function CardComponent(props) {
   const yesVotes = props.itemData.votes_yes;
   const noVotes = props.itemData.votes_no;
 
+  const totalVotes = yesVotes + noVotes;
+  const yesPercentage = Math.round((yesVotes / totalVotes) * 100);
+
   return (
     <>
       <Card
@@ -61,11 +64,9 @@ function CardComponent(props) {
           />
         )}
         <Flex justify="space-around">
-          <span className="vote-icon-circle">
+          <span className="vote-icon-circle vote-icon-result">
             <i className="bi bi-hand-thumbs-up vote-icon"></i>
-          </span>
-          <span className="vote-icon-circle">
-            <i className="bi bi-hand-thumbs-down vote-icon"></i>
+            <span className="vote-percentage">{yesPercentage}%</span>
           </span>
         </Flex>
         <div className="space"></div>

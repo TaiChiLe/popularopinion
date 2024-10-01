@@ -1,8 +1,13 @@
 import { Card, Image, Space, Flex, Avatar } from 'antd';
 import { AntDesignOutlined, UserOutlined } from '@ant-design/icons';
 import { Typography, Divider, Button } from 'antd';
+import { useState } from 'react';
+import { Chart } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 function CardComponent(props) {
+  const [userData, setUserData] = useState(null);
   const key = props.key;
   const question = props.itemData.question;
   const image = props.itemData.image;
@@ -70,14 +75,25 @@ function CardComponent(props) {
         </Flex>
         <div className="space"></div>
         <Flex justify="center">
-          <Button
-            href="/pollinfo"
-            size="large"
-            className="poll-info-btn"
-            type="primary"
-          >
-            Poll Info
-          </Button>
+          <Bar
+            data={{
+              labels: ['Australia', 'United States', 'Vietnam'],
+              datasets: [
+                {
+                  label: 'Yes Votes',
+                  data: [100, 200, 300],
+                  backgroundColor: ['green'],
+                  borderRadius: '10',
+                },
+                {
+                  label: 'No Votes',
+                  data: [150, 120, 200],
+                  backgroundColor: ['red'],
+                  borderRadius: '10',
+                },
+              ],
+            }}
+          />
         </Flex>
       </Card>
     </>

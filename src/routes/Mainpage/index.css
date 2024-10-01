@@ -11,6 +11,19 @@ body {
     font-size: 40px;
 }
 
+.avatar-btn {
+    width: 45px;
+    height: 45px;
+}
+
+
+.avatar-btn:hover {
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    border: 1px solid #6dd4c7;
+}
+
 .bi-star {
     font-size: 25px;
     color: gold;
@@ -34,6 +47,15 @@ body {
 .bi-share-fill:hover {
     cursor: pointer;
     color: white;
+}
+
+.bi-plus-circle {
+    font-size: 40px;
+}
+
+.bi-plus-circle:hover {
+    cursor: pointer;
+    color: #6dd4c7;
 }
 
 .vote-icon {
@@ -90,4 +112,8 @@ body {
     position: absolute;
     left: 100px;
     top: 40px
+}
+
+.poll-info-btn {
+    background-color: #464646;
 }
