@@ -1,53 +1,22 @@
-.bi-gear,
-.bi-house {
-    font-size: 40px;
+.wrapper {
+    max-width: 500px;
+    margin: 80px auto;
+    background-color: #555555;
+    padding: 20px;
+    border-radius: 20px;
 }
 
-.bi-house:hover {
-    color: #6dd4c7;
-    cursor: pointer;
-}
-
-.avatar-active {
-    border: 1px solid #6dd4c7;
-}
-
-.avatar-profile {
-    height: 200px;
-    width: 200px;
-}
-
-.space-small {
-    margin-bottom: 10px;
-}
-
-.name-title {
-    font-weight: bold;
+.settings-headings {
     font-size: 30px;
-}
-
-.data-container {
-    font-size: 40px;
     font-weight: bold;
-    background-color: grey;
-    padding: 10px 20px;
-    border-radius: 50px;
 }
 
-.vote-icon-result {
-    width: 300px;
+.flex-xl-gap {
+    gap: 100px;
 }
 
-.vote-percentage {
-    color: black;
-    font-size: 40px;
-    font-weight: bold;
-    margin-left: 55px;
-}
-
-.bi-gear:hover {
-    cursor: pointer;
-    color: #6dd4c7;
+.settings-details {
+    font-size: 16px;
 }
 
 .settings-active {

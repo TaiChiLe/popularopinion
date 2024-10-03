@@ -74,27 +74,39 @@ function CardComponent(props) {
           </span>
         </Flex>
         <div className="space"></div>
-        <Flex justify="center">
-          <Bar
-            data={{
-              labels: ['Australia', 'United States', 'Vietnam'],
-              datasets: [
-                {
-                  label: 'Yes Votes',
-                  data: [100, 200, 300],
-                  backgroundColor: ['green'],
-                  borderRadius: '10',
-                },
-                {
-                  label: 'No Votes',
-                  data: [150, 120, 200],
-                  backgroundColor: ['red'],
-                  borderRadius: '10',
-                },
-              ],
-            }}
-          />
-        </Flex>
+
+        <Bar
+          data={{
+            labels: [
+              'Australia',
+              'United States',
+              'Vietnam',
+              'United States',
+              'Vietnam',
+              'United States',
+              'Vietnam',
+              'testests',
+              'testste',
+            ],
+            datasets: [
+              {
+                label: 'Yes Votes',
+                data: [100, 200, 300, 200, 150, 120, 20, 30, 40],
+                backgroundColor: ['green'],
+                borderRadius: '10',
+              },
+              {
+                label: 'No Votes',
+                data: [120, 230, 140, 230, 50, 20, 120, 330, 140],
+                backgroundColor: ['red'],
+                borderRadius: '10',
+              },
+            ],
+          }}
+          // options={{
+          //   indexAxis: 'y',
+          // }}
+        />
       </Card>
     </>
   );
