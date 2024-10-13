@@ -6,7 +6,12 @@ const { Title } = Typography;
 function Tabs() {
   return (
     <>
-      <Flex style={{ marginTop: '20px' }} align="center" justify="space-around">
+      <Flex
+        className="tabs-wrapper"
+        style={{ marginTop: '20px' }}
+        align="center"
+        justify="space-around"
+      >
         <div className="tab active">
           <i className="bi bi-star"></i>Hot
         </div>

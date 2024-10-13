@@ -4,34 +4,43 @@ import { useState } from 'react';
 import { Button, Modal, Input } from 'antd';
 import { message, Upload, Avatar } from 'antd';
 const { Title } = Typography;
-import { useNavigate } from 'react-router-dom';
-
+const props = {
+  name: 'file',
+  action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+  headers: {
+    authorization: 'authorization-text',
+  },
+  onChange(info) {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+};
 function Header() {
-  let navigate = useNavigate();
-  const routeChange = () => {
-    let path = `/mainpage`;
-    navigate(path);
-  };
-
   return (
     <>
-      <Flex align="center" justify="space-around">
+      <Flex className="header-wrapper" align="center" justify="space-between">
         <div>
-          <Title style={{ color: 'white' }}>Account</Title>
+          <Title className="title">Popular Opinion</Title>
         </div>
-        <div>
-          <i onClick={routeChange} class="bi bi-house"></i>
+        <div className="header-icons">
+          <Flex gap="small" align="center">
+            <div>
+              <i class="bi bi-search"></i>
+            </div>
+            <a href="/profile">
+              <Avatar
+                className="avatar-btn"
+                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              />
+            </a>
+          </Flex>
         </div>
-        <div>
-          <a href="/profilesettings">
-            <i class="bi bi-gear"></i>
-          </a>
-        </div>
-
-        <Avatar
-          className="avatar-btn avatar-active"
-          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        />
       </Flex>
     </>
   );

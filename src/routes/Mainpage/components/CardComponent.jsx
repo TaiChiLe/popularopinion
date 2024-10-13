@@ -1,8 +1,15 @@
-import { Card, Image, Space, Flex, Avatar } from 'antd';
+import { Card, Image, Space, Flex, Avatar, Slider } from 'antd';
 import { AntDesignOutlined, UserOutlined } from '@ant-design/icons';
 import { Typography, Divider, Button } from 'antd';
+import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+
+let fill = 1;
 
 function CardComponent(props) {
+  const [buttonClass, setButtonClass] = useState();
+  const [isPressed, setIsPressed] = useState(false);
+  const [timer, setTimer] = useState(null);
   const key = props.key;
   const question = props.itemData.question;
   const image = props.itemData.image;
@@ -10,14 +17,41 @@ function CardComponent(props) {
   const yesVotes = props.itemData.votes_yes;
   const noVotes = props.itemData.votes_no;
 
+  function onMouseDown() {
+    setIsPressed(true);
+    setTimer(
+      setInterval(() => {
+        fill += 1;
+        console.log('testing');
+        setButtonClass(`vote-btn-hold-${fill}`);
+
+        if (fill >= 10) {
+          setButtonClass(`vote-btn-hold-10`);
+        }
+      }, 100)
+    );
+  }
+
+  function onMouseLeave() {
+    setIsPressed(false);
+    fill = 0;
+    clearInterval(timer); // Clear the timer on mouse up
+  }
+
+  useEffect(() => {
+    return () => {
+      // Cleanup the timer on component unmount
+      if (timer) clearInterval(timer);
+    };
+  }, [timer]);
   return (
     <>
       <Card
         style={{
           width: '90%',
           maxWidth: 600,
-          backgroundColor: '#6dd4c7',
-          borderColor: '#6dd4c7',
+          backgroundColor: 'white',
+          borderColor: 'white',
           color: 'white',
         }}
       >
@@ -29,7 +63,7 @@ function CardComponent(props) {
                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               />
               <div>
-                <b>Tyson Le</b>
+                <b className="profile-name">Tyson Le</b>
               </div>
               <div className="hour-text">1 Hour Ago</div>
             </Flex>
@@ -40,7 +74,7 @@ function CardComponent(props) {
         <Typography.Title
           level={3}
           style={{
-            color: 'white',
+            color: 'black',
             marginTop: '12px',
           }}
         >
@@ -60,14 +94,31 @@ function CardComponent(props) {
             allowFullScreen
           />
         )}
+        <div className="space"></div>
+        <Flex justify="flex-end" gap="middle">
+          <div className="grey-text">19 Comments</div>
+          <div className="grey-text">10 Shares</div>
+        </Flex>
+        <div className="space"></div>
         <Flex justify="space-around">
-          <span className="vote-icon-circle">
+          <div
+            className={`${buttonClass} vote-btn ${isPressed ? 'pressed' : ''}`}
+            onMouseDown={onMouseDown}
+            onPointerDown={onMouseDown}
+            onMouseUp={onMouseLeave}
+            onMouseLeave={onMouseLeave}
+          >
+            Vote Me!
+          </div>
+
+          {/* <span className="vote-icon-circle">
             <i className="bi bi-hand-thumbs-up vote-icon"></i>
           </span>
           <span className="vote-icon-circle">
             <i className="bi bi-hand-thumbs-down vote-icon"></i>
-          </span>
+          </span> */}
         </Flex>
+        <Slider defaultValue={50} />
         <div className="space"></div>
         <Flex justify="center">
           <Button

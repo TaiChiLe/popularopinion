@@ -19,8 +19,8 @@ function CardComponent(props) {
         style={{
           width: '90%',
           maxWidth: 600,
-          backgroundColor: '#6dd4c7',
-          borderColor: '#6dd4c7',
+          backgroundColor: 'white',
+          borderColor: 'white',
           color: 'white',
         }}
       >
@@ -32,7 +32,7 @@ function CardComponent(props) {
                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               />
               <div>
-                <b>Tyson Le</b>
+                <b className="profile-name">Tyson Le</b>
               </div>
               <div className="hour-text">1 Hour Ago</div>
             </Flex>
@@ -43,7 +43,7 @@ function CardComponent(props) {
         <Typography.Title
           level={3}
           style={{
-            color: 'white',
+            color: 'black',
             marginTop: '12px',
           }}
         >

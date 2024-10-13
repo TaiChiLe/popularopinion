@@ -21,8 +21,8 @@ function CardComponent(props) {
         style={{
           width: '90%',
           maxWidth: 600,
-          backgroundColor: '#6dd4c7',
-          borderColor: '#6dd4c7',
+          backgroundColor: 'white',
+          borderColor: 'white',
           color: 'white',
         }}
       >
@@ -34,7 +34,7 @@ function CardComponent(props) {
                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               />
               <div>
-                <b>Tyson Le</b>
+                <b className="profile-name">Tyson Le</b>
               </div>
               <div className="hour-text">1 Hour Ago</div>
             </Flex>
@@ -107,6 +107,34 @@ function CardComponent(props) {
           //   indexAxis: 'y',
           // }}
         />
+        <Divider></Divider>
+        <Avatar
+          className="Comment-avatar"
+          size="large"
+          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+        />
+        <div className="Comment">
+          <div className="Comment-Author">Tyson Le</div>Pepsi is awesome, I love
+          pepsi!
+        </div>
+        <Avatar
+          className="Comment-avatar"
+          size="large"
+          src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
+        />
+        <div className="Comment">
+          <div className="Comment-Author">Tran Nguyen</div>I can drink pepsi all
+          day long! This is some very long text
+          sadfsdfsdfsdfsdfsdfssdfsdfsdfasdasdasdasd
+        </div>
+        <Avatar
+          className="Comment-avatar"
+          size="large"
+          src="https://api.dicebear.com/7.x/miniavs/svg?seed=0"
+        />
+        <div className="Comment">
+          <div className="Comment-Author">Aries Hoang</div>Sugar High All Day!
+        </div>
       </Card>
     </>
   );

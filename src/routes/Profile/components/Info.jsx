@@ -10,7 +10,7 @@ function Info() {
             src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
           />
         </div>
-        <div>
+        <div className="info-text-wrapper">
           <div className="name-title">Tyson Le</div>
           <div className="space-small"></div>
           <div>@IronMadt</div>
@@ -18,7 +18,10 @@ function Info() {
           <div>Hi! I'm Tyson, I love food and games and blah blah blah</div>
           <div className="space-small"></div>
           <div>
-            <b>2K Followers 21 Following</b>
+            <b>2K Followers</b>
+          </div>
+          <div>
+            <b>21 Following</b>
           </div>
         </div>
       </Flex>
