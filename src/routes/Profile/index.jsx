@@ -1,5 +1,5 @@
 import './index.css';
-import Header from './components/Header';
+import Header from '../Mainpage/components/Header';
 import Info from './components/Info';
 import ProfileData from './components/ProfileData';
 import CardComponent from './components/CardComponent';

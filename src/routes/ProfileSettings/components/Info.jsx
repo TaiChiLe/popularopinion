@@ -3,7 +3,7 @@ import { Avatar, Flex, Row, Col } from 'antd';
 function Info() {
   return (
     <>
-      <div className="wrapper">
+      <div className="info-wrapper">
         <div className="settings-headings">Photo</div>
         <Flex horizontal align="center" justify="space-around">
           <div>

@@ -16,10 +16,12 @@ function Footer() {
           </a>
         </div>
         <div>
-          <Flex vertical align="center">
-            <i class="bi bi-plus-circle footer-icons"></i>
-            <div>Create</div>
-          </Flex>
+          <a href="/createpoll">
+            <Flex vertical align="center">
+              <i class="bi bi-plus-circle footer-icons"></i>
+              <div>Create</div>
+            </Flex>
+          </a>
         </div>
         <div>
           <Flex vertical align="center">

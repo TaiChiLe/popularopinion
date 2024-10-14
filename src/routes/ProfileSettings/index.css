@@ -1,5 +1,5 @@
-.wrapper {
-    max-width: 500px;
+.info-wrapper {
+    max-width: 80vw;
     margin: 80px auto;
     background-color: #555555;
     padding: 20px;
@@ -21,4 +21,9 @@
 
 .settings-active {
     color: #6dd4c7;
+}
+
+.avatar-profile {
+    height: 100px;
+    width: 100px;
 }

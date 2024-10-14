@@ -26,13 +26,17 @@ function Header() {
     <>
       <Flex className="header-wrapper" align="center" justify="space-between">
         <div>
-          <Title className="title">Popular Opinion</Title>
+          <Title className="title">PopOp</Title>
         </div>
         <div className="header-icons">
-          <Flex gap="small" align="center">
+          <Flex gap="middle" align="center">
+            <Input placeholder="Search..." />
             <div>
               <i class="bi bi-search"></i>
             </div>
+            <a href="/profilesettings">
+              <i class="bi bi-gear-fill"></i>
+            </a>
             <a href="/profile">
               <Avatar
                 className="avatar-btn"

@@ -10,6 +10,7 @@ import Mainpage from './routes/Mainpage';
 import Pollinfo from './routes/Pollinfo';
 import Profile from './routes/Profile';
 import ProfileSettings from './routes/ProfileSettings';
+import Createpoll from './routes/Createpoll';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
       <Route path="/pollinfo" element={<Pollinfo />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
       <Route path="/profilesettings" element={<ProfileSettings />}></Route>
+      <Route path="/createpoll" element={<Createpoll />}></Route>
     </>
   )
 );

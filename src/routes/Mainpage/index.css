@@ -73,8 +73,8 @@ body {
 }
 
 .tab {
-    font-size: 25px;
-    padding: 10px 20px;
+    font-size: 20px;
+    padding: 8px 17px;
     border-radius: 30px;
 }
 
@@ -116,7 +116,7 @@ body {
 div .title {
     color: white;
     word-break: break-all;
-    font-size: 25px;
+    font-size: 20px;
     padding-left: 20px;
 }
 
@@ -130,6 +130,7 @@ div .title {
     background-color: #2A2A2A;
     width: 100vw;
     top: 0px;
+    padding-bottom: 5px;
 }
 
 .tabs-wrapper {
@@ -137,8 +138,8 @@ div .title {
     z-index: 1;
     background-color: #2A2A2A;
     width: 100vw;
-    top: 39px;
-    padding-bottom: 10px;
+    top: 32px;
+    padding-bottom: 8px;
 }
 
 .main-content-container {
@@ -272,4 +273,8 @@ div .title {
 
 .grey-text {
     color: grey;
+}
+
+.bi-gear-fill {
+    font-size: 25px;
 }
