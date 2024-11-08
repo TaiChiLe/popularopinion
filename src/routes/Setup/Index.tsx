@@ -1,11 +1,10 @@
 import { Typography } from 'antd';
-import type { FormProps } from 'antd';
+
 import { Button, DatePicker, Form, Input, Select, Checkbox } from 'antd';
 
 import './Index.css';
 
 const Text = Typography;
-const { RangePicker } = DatePicker;
 function Setup() {
   const [form] = Form.useForm();
   return (
