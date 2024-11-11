@@ -1,0 +1,62 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+
+.post-question {
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    width: 100vw;
+}
+
+.post {
+    margin-bottom: 50px;
+}
+
+.main-page-container {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 150px;
+    margin-top: 100px;
+}
+
+.post-background {
+    background-image: url(https://plus.unsplash.com/premium_photo-1672201106204-58e9af7a2888?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3JhZGllbnR8ZW58MHx8MHx8fDA%3D);
+    background-position: center;
+    background-size: cover;
+    height: 300px;
+    display: flex;
+    align-items: center;
+
+}
+
+.vote-results {
+    text-align: center;
+}
+
+.vote-btns {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    margin-top: 20px;
+}
+
+.vote-btn {
+    font-size: 50px;
+    background-color: white;
+    padding: 20px 25px;
+    border-radius: 1000px;
+}
+
+.vote-btn:hover {
+    cursor: pointer;
+    background-color: lightgrey;
+}
+
+.bi-hand-thumbs-up {
+    color: green;
+}
+
+.bi-hand-thumbs-down {
+    color: red;
+}
