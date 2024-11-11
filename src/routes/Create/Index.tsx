@@ -1,20 +1,12 @@
 import './index.css';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
-import { PlusOutlined } from '@ant-design/icons';
-import { DatePicker, Form, Input, Upload, Button } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { Authenticated } from '../../Components/Authenticated';
 import { useEffect, useState } from 'react';
 import supabase from '../../utils/supabase';
 import { useNavigate } from 'react-router-dom';
-
 const { TextArea } = Input;
-const normFile = (e) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
 
 function Create() {
   const navigate = useNavigate();
