@@ -17,6 +17,7 @@ function Create() {
   function captureQuestion(e) {
     const text = e.target.value; // Corrected to capture the value
     setQuestion(text);
+    g;
   }
 
   async function submitQuestion() {
