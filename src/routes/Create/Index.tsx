@@ -11,13 +11,18 @@ const { TextArea } = Input;
 function Create() {
   const navigate = useNavigate();
   const [question, setQuestion] = useState('');
+  const [url, setUrl] = useState('');
   const [userId, setUserId] = useState(null); // Set user ID at the top level
   const [session, setSession] = useState(null);
 
   function captureQuestion(e) {
     const text = e.target.value; // Corrected to capture the value
     setQuestion(text);
-    g;
+  }
+
+  function captureUrl(e) {
+    const urlLink = e.target.value;
+    setUrl(urlLink);
   }
 
   async function submitQuestion() {
@@ -26,7 +31,7 @@ function Create() {
     if (userId && question) {
       error = await supabase
         .from('polls')
-        .insert({ question: question, user_id: userId });
+        .insert({ question: question, user_id: userId, url: url });
 
       navigate('/main');
     } else {
@@ -79,6 +84,9 @@ function Create() {
         <Form layout="horizontal">
           <Form.Item label="Question">
             <TextArea onChange={captureQuestion} rows={2} />
+          </Form.Item>
+          <Form.Item label="Image / Video Link">
+            <Input onChange={captureUrl} placeholder="https://imagelink.jpg" />
           </Form.Item>
           <Authenticated>
             <Form.Item>
