@@ -1,0 +1,60 @@
+.header {
+    width: 100vw;
+    height: 80px;
+    background-color: #2A2A2A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: fixed;
+    z-index: 1;
+}
+
+.heading {
+    color: white;
+    font-size: 25px;
+}
+
+.header-tabs {
+    color: white;
+    display: flex;
+    font-size: 20px;
+    gap: 20px;
+}
+
+.footer {
+    width: 100vw;
+    height: 90px;
+    display: flex;
+    font-size: 20px;
+    gap: 10px;
+    background-color: #2A2A2A;
+    color: white;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0px;
+    align-items: center;
+}
+
+.authenticated {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-icon {
+    font-size: 30px;
+}
+
+.footer-tabs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    gap: 10px;
+}
+
+.footer-tab-font {
+    font-size: 15px
+}
