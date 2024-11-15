@@ -11,9 +11,8 @@ function MainPage() {
   const [votes, setVotes] = useState([]);
   const [userId, setUserId] = useState(null);
   const [session, setSession] = useState(null);
-  const [backgroundUrl] = useState(
-    'https://plus.unsplash.com/premium_photo-1672201106204-58e9af7a2888?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3JhZGllbnR8ZW58MHx8MHx8fDA%3D'
-  );
+  const backgroundUrl =
+    'https://plus.unsplash.com/premium_photo-1672201106204-58e9af7a2888?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3JhZGllbnR8ZW58MHx8MHx8fDA%3D';
 
   useEffect(() => {
     async function fetchData() {
