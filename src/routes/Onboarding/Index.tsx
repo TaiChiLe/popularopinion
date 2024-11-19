@@ -15,6 +15,9 @@ import { Session } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../Components/Footer';
 import Header from '../../Components/Header';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 function Onboarding() {
   const [countries, setCountries] = useState(null);
@@ -65,7 +68,7 @@ function Onboarding() {
           firstname: data.firstname,
           lastname: data.lastname,
           location: data.location,
-          dob: data.dob,
+          dob: dayjs(data.dob, 'YYYY-MM-DD').isValid() ? dayjs(data.dob) : null,
           displayname: data.displayname,
           email: session.user.email,
         });
@@ -83,6 +86,22 @@ function Onboarding() {
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     console.log('Success:', values);
+    supabase
+      .rpc('upsert_user', {
+        user_id: session?.user.id,
+        first_name: values.firstname,
+        last_name: values.lastname,
+        email: values.email,
+        dob: values.dob,
+        location: values.location,
+        display_name: values.displayname,
+      })
+      .then(() => {
+        notification.success({
+          message: 'User information updated',
+        });
+        navigate('/main');
+      });
   };
 
   return (
@@ -109,7 +128,7 @@ function Onboarding() {
               <Input placeholder="SlickWick@gmail.com" />
             </Form.Item>
             <Form.Item<FieldType> label="Date of birth" name="dob">
-              <DatePicker />
+              <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
             <Form.Item<FieldType> label="Location" name="location">
               <Select>
