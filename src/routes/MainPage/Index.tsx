@@ -2,65 +2,47 @@ import { useEffect, useState } from 'react';
 import Footer from '../../Components/Footer';
 import Header from '../../Components/Header';
 import './Index.css';
-import { Button } from 'antd';
 import supabase from '../../utils/supabase';
 import { Authenticated } from '../../Components/Authenticated';
+import { isFormElement } from 'react-router-dom/dist/dom';
 
 function MainPage() {
   const [polls, setPolls] = useState([]);
   const [votes, setVotes] = useState([]);
-  const [userId, setUserId] = useState(null); // Set user ID at the top level
+  const [userId, setUserId] = useState(null);
   const [session, setSession] = useState(null);
+  const backgroundUrl =
+    'https://plus.unsplash.com/premium_photo-1672201106204-58e9af7a2888?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3JhZGllbnR8ZW58MHx8MHx8fDA%3D';
 
   useEffect(() => {
-    async function getPolls() {
-      const { data } = await supabase.from('polls').select();
-      if (data) {
-        setPolls(data);
-      }
-    }
+    async function fetchData() {
+      const { data: pollsData } = await supabase.from('polls').select();
+      const { data: votesData } = await supabase.from('votes').select();
 
-    async function getVotes() {
-      const { data } = await supabase.from('votes').select();
-      if (data) {
-        setVotes(data);
-      }
+      if (pollsData) setPolls(pollsData);
+      if (votesData) setVotes(votesData);
     }
 
     async function fetchUserId() {
-      // Fetch the current session on component mount
       const { data: sessionData } = await supabase.auth.getSession();
       setSession(sessionData?.session);
-
-      // Set the user ID if a session exists
       if (sessionData?.session?.user?.id) {
         setUserId(sessionData.session.user.id);
       }
 
-      // Listen for session changes (e.g., login, logout)
       const { data: authListener } = supabase.auth.onAuthStateChange(
         (_event, updatedSession) => {
           setSession(updatedSession);
-
-          // Update the user ID when the session changes
-          if (updatedSession?.user?.id) {
-            setUserId(updatedSession.user.id);
-          } else {
-            setUserId(null); // Clear user ID if logged out
-          }
+          setUserId(updatedSession?.user?.id || null);
         }
       );
 
-      // Cleanup the listener on unmount
-      return () => {
-        authListener?.unsubscribe();
-      };
+      return () => authListener?.unsubscribe();
     }
 
-    getVotes();
-    getPolls();
-    fetchUserId(); // Fetch user ID once on component mount
-  }, [votes]);
+    fetchData();
+    fetchUserId();
+  }, []);
 
   function getTotalVotesByID(id) {
     const totalVotes = votes.filter((vote) => vote.poll_id === id);
@@ -74,7 +56,7 @@ function MainPage() {
     return filteredVotes.length;
   }
 
-  async function handleVote(vote_id: number, vote_choice: boolean) {
+  async function handleVote(vote_id, vote_choice) {
     if (!userId) {
       console.error('User is not logged in.');
       return;
@@ -86,60 +68,84 @@ function MainPage() {
       votes_choice: vote_choice,
     };
 
-    console.log(voteData);
+    const { error } = await supabase.rpc('upsert_votes', voteData);
 
-    const { data, error: error2 } = await supabase.rpc(
-      'upsert_votes',
-      voteData
-    );
-
-    if (error2) {
-      console.error('Error upserting vote:', error2);
-      alert(error2.message);
+    if (error) {
+      console.error('Error upserting vote:', error);
     } else {
-      console.log('Vote upserted:', data);
-      const { newVotesData } = await supabase.from('votes').select();
-      if (newVotesData) {
-        setVotes(newVotesData); // Update the local state to reflect the vote
-      }
+      const { data: updatedVotes } = await supabase.from('votes').select();
+      if (updatedVotes) setVotes(updatedVotes);
     }
+  }
+
+  // Function to check if a URL is a YouTube link and return its embed URL
+  function getYouTubeEmbedUrl(url) {
+    if (!url) {
+      return null;
+    }
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|embed)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    return null;
   }
 
   return (
     <>
       <Header />
-
       <div className="main-page-container">
-        {polls.map((poll) => (
-          <div className="post" key={poll.id}>
-            <div className="post-background">
-              <div className="post-question">{poll.question}</div>
-            </div>
-            <div>
-              <div className="vote-results">
-                Current Votes Total: {getTotalVotesByID(poll.id)}
-              </div>
-              <div className="vote-results">
-                Current Votes Up: {getTotalVotesbyType(poll.id, true)}
-              </div>
-              <div className="vote-results">
-                Current Votes Down: {getTotalVotesbyType(poll.id, false)}
-              </div>
-              <Authenticated>
-                <div className="vote-btns">
-                  <i
-                    class="bi bi-hand-thumbs-up vote-btn"
-                    onClick={() => handleVote(poll.id, true)}
-                  ></i>
-                  <i
-                    class="bi bi-hand-thumbs-down vote-btn"
-                    onClick={() => handleVote(poll.id, false)}
-                  ></i>
+        {polls.map((poll) => {
+          const youTubeEmbedUrl = getYouTubeEmbedUrl(poll.url);
+          return (
+            <div className="post" key={poll.id}>
+              {youTubeEmbedUrl ? (
+                <iframe
+                  width="100%"
+                  height="300px"
+                  src={youTubeEmbedUrl}
+                  frameBorder="0"
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div
+                  className="post-background"
+                  style={{
+                    backgroundImage: `url(${poll.url || backgroundUrl})`,
+                  }}
+                >
+                  <div className="post-question">{poll.question}</div>
                 </div>
-              </Authenticated>
+              )}
+              <div>
+                <div className="vote-results">
+                  Current Votes Total: {getTotalVotesByID(poll.id)}
+                </div>
+                <div className="vote-results">
+                  Current Votes Up: {getTotalVotesbyType(poll.id, true)}
+                </div>
+                <div className="vote-results">
+                  Current Votes Down: {getTotalVotesbyType(poll.id, false)}
+                </div>
+                <Authenticated>
+                  <div className="vote-btns">
+                    <i
+                      className="bi bi-hand-thumbs-up vote-btn"
+                      onClick={() => handleVote(poll.id, true)}
+                    ></i>
+                    <i
+                      className="bi bi-hand-thumbs-down vote-btn"
+                      onClick={() => handleVote(poll.id, false)}
+                    ></i>
+                  </div>
+                </Authenticated>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <Footer />
     </>
