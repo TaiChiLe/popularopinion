@@ -33,7 +33,7 @@ function Onboarding() {
       setSession(session);
 
       if (!session) {
-        navigate('/sign-in');
+        navigate('/login2');
       }
     });
 

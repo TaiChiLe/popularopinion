@@ -7,26 +7,34 @@ import { useEffect, useState } from 'react';
 
 export function EmployeeAuth() {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState();
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_IN') {
           console.log('User signed in:', session);
-          supabase
-          .rpc('get_user', {
-            user_id: session?.user.id,
-          })
-          .then(({ data, error }) => {
-            if (error) {
-              console.error(error);
-              return;
-            }
-            setUserData(data);
 
-            console.log(userData);
-          navigate('/main'); // Redirect to dashboard
+          supabase
+            .rpc('get_user', {
+              user_id: session?.user.id,
+            })
+            .then(({ data, error }) => {
+              if (error) {
+                console.error('Error has occured getting user', error);
+                return;
+              }
+              if (
+                data?.firstname &&
+                data?.lastname &&
+                data?.email &&
+                data?.dob &&
+                data?.location
+              ) {
+                navigate('/main'); // Redirect to dashboard
+              } else {
+                navigate('/onboarding');
+              }
+            });
         }
       }
     );
