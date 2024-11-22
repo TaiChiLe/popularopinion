@@ -7,6 +7,9 @@
     width: 100vw;
     -webkit-text-stroke-width: 0.5px;
     -webkit-text-stroke-color: white;
+    position: relative;
+    height: 10px;
+    top: -200px;
 }
 
 .post {
@@ -30,6 +33,7 @@
     height: 300px;
     display: flex;
     align-items: center;
+    position: relative;
 
 }
 

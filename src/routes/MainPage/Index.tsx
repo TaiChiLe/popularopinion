@@ -3,8 +3,9 @@ import Footer from '../../Components/Footer';
 import Header from '../../Components/Header';
 import './Index.css';
 import supabase from '../../utils/supabase';
-import { Authenticated } from '../../Components/Authenticated';
 import { isFormElement } from 'react-router-dom/dist/dom';
+import { Authenticated } from '../../Components/Authenticated';
+import { Image } from 'antd';
 
 function MainPage() {
   const [polls, setPolls] = useState([]);
@@ -26,18 +27,7 @@ function MainPage() {
     async function fetchUserId() {
       const { data: sessionData } = await supabase.auth.getSession();
       setSession(sessionData?.session);
-      if (sessionData?.session?.user?.id) {
-        setUserId(sessionData.session.user.id);
-      }
-
-      const { data: authListener } = supabase.auth.onAuthStateChange(
-        (_event, updatedSession) => {
-          setSession(updatedSession);
-          setUserId(updatedSession?.user?.id || null);
-        }
-      );
-
-      return () => authListener?.unsubscribe();
+      setUserId(sessionData.session.user.id);
     }
 
     fetchData();
@@ -93,7 +83,7 @@ function MainPage() {
   }
 
   return (
-    <>
+    <Authenticated>
       <Header />
       <div className="main-page-container">
         {polls.map((poll) => {
@@ -111,12 +101,18 @@ function MainPage() {
                   allowFullScreen
                 />
               ) : (
-                <div
-                  className="post-background"
-                  style={{
-                    backgroundImage: `url(${poll.url || backgroundUrl})`,
-                  }}
-                >
+                // <div
+                //   className="post-background"
+                //   style={{
+                //     backgroundImage: `url(${poll.url || backgroundUrl})`,
+                //   }}
+                // >
+                <div>
+                  <Image
+                    className="post-background"
+                    preview={false}
+                    src={`${poll.url || backgroundUrl}`}
+                  ></Image>
                   <div className="post-question">{poll.question}</div>
                 </div>
               )}
@@ -130,25 +126,23 @@ function MainPage() {
                 <div className="vote-results">
                   Current Votes Down: {getTotalVotesbyType(poll.id, false)}
                 </div>
-                <Authenticated>
-                  <div className="vote-btns">
-                    <i
-                      className="bi bi-hand-thumbs-up vote-btn"
-                      onClick={() => handleVote(poll.id, true)}
-                    ></i>
-                    <i
-                      className="bi bi-hand-thumbs-down vote-btn"
-                      onClick={() => handleVote(poll.id, false)}
-                    ></i>
-                  </div>
-                </Authenticated>
+                <div className="vote-btns">
+                  <i
+                    className="bi bi-hand-thumbs-up vote-btn"
+                    onClick={() => handleVote(poll.id, true)}
+                  ></i>
+                  <i
+                    className="bi bi-hand-thumbs-down vote-btn"
+                    onClick={() => handleVote(poll.id, false)}
+                  ></i>
+                </div>
               </div>
             </div>
           );
         })}
       </div>
       <Footer />
-    </>
+    </Authenticated>
   );
 }
 

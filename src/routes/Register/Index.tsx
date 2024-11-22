@@ -1,53 +1,83 @@
-import { Input, Typography, Anchor, CheckboxProps, Button } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import './Index.css';
+import type { FormProps } from 'antd';
+import { Button, notification, Form, Input, Typography } from 'antd';
+import supabase from '../../utils/supabase';
+import { Link } from 'react-router-dom';
+import styles from './Index.module.css';
 
-const Text = Typography;
-const onChange: CheckboxProps['onChange'] = (e) => {
-  console.log(`checked = ${e.target.checked}`);
+type FieldType = {
+  email?: string;
+  password?: string;
 };
-function Register() {
-  return (
-    <div className="container">
-      <Text className="title">Popular Opinion</Text>
-      <div className="signin-header">
-        <Anchor
-          direction="horizontal"
-          items={[
-            {
-              key: 'part-1',
-              href: '/login',
-              title: 'Login',
-            },
-            {
-              key: 'part-2',
-              href: '/register',
-              title: 'Register',
-            },
-          ]}
-        />
-      </div>
-      <Input
-        className="login-inputs"
-        placeholder="Username"
-        prefix={<UserOutlined />}
-      />
-      <Input.Password
-        className="login-inputs"
-        placeholder="input password"
-        prefix={<LockOutlined></LockOutlined>}
-      />
 
-      <Input.Password
-        className="login-inputs"
-        placeholder="confirm password"
-        prefix={<LockOutlined></LockOutlined>}
-      />
-      <div className="signin-btn">
-        <Button type="primary">Register</Button>
+export function Register() {
+  const [api, contextHolder] = notification.useNotification();
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    console.log('Success:', values);
+    // We need to use SUpabase to verify current user
+    try {
+      const data = await supabase.auth.signUp({
+        email: values.email!,
+        password: values.password!,
+      });
+
+      if (data.error) {
+        api.open({
+          type: 'warning',
+          message: 'Failed to Sign up',
+        });
+      } else {
+        api.open({
+          type: 'success',
+          message: 'Sign up done!',
+        });
+      }
+    } catch (e) {
+      console.log('failed to log in', e);
+    }
+  };
+
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
+    errorInfo
+  ) => {
+    console.log('Failed:', errorInfo);
+  };
+
+  return (
+    <Form
+      className={styles.container}
+      layout="vertical"
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+    >
+      {contextHolder}
+      <Typography.Title>Sign up</Typography.Title>
+      <Form.Item<FieldType>
+        label="Email"
+        name="email"
+        rules={[{ required: true, message: 'Please input your username!' }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item<FieldType>
+        label="Password"
+        name="password"
+        rules={[{ required: true, message: 'Please input your password!' }]}
+      >
+        <Input.Password />
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+
+      <div>
+        Have an account <Link to="/login">Sign in</Link>
       </div>
-    </div>
+    </Form>
   );
 }
-
-export default Register;

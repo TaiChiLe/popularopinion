@@ -1,60 +1,87 @@
 import './Index.css';
-import React from 'react';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Input, Typography } from 'antd';
-import { Checkbox } from 'antd';
-import { CheckboxProps, Anchor, Button } from 'antd';
+import React, { useEffect } from 'react';
+import type { FormProps } from 'antd';
+import { Button, Checkbox, Form, Input, notification, Typography } from 'antd';
+import supabase from '../../utils/supabase';
+import Password from 'antd/es/input/Password';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Text = Typography;
-const onChange: CheckboxProps['onChange'] = (e) => {
-  console.log(`checked = ${e.target.checked}`);
+type FieldType = {
+  email?: string;
+  password?: string;
 };
-function Login() {
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
-  return (
-    <div className="container">
-      <Text className="title">Popular Opinion</Text>
-      <div className="signin-header">
-        <Anchor
-          direction="horizontal"
-          items={[
-            {
-              key: 'part-1',
-              href: '/login',
-              title: 'Login',
-            },
-            {
-              key: 'part-2',
-              href: '/register',
-              title: 'Register',
-            },
-          ]}
-        />
-      </div>
 
-      <Input
-        className="login-inputs"
-        placeholder="Username"
-        prefix={<UserOutlined />}
-      />
-      <Input.Password
-        className="login-inputs"
-        placeholder="input password"
-        prefix={<LockOutlined></LockOutlined>}
-      />
-      <div className="login-footer">
-        <Checkbox onChange={onChange}>Remember me</Checkbox>
-        <a>
-          <Text>Forgot your password?</Text>
-        </a>
+function Login() {
+  const navigate = useNavigate();
+  const [api, contextholder] = notification.useNotification();
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    console.log('Success:', values);
+    //we need supbase to verify current user
+    try {
+      const data = await supabase.auth.signInWithPassword({
+        email: values.email!,
+        password: values.password!,
+      });
+
+      if (data.error) {
+        api.open({
+          message: 'Failed to login',
+          type: 'warning',
+        });
+      } else {
+        api.open({
+          message: 'Login successul',
+          type: 'success',
+        });
+        console.log('success');
+        navigate('/main');
+      }
+    } catch (e) {
+      console.log('Failed to login', e);
+    }
+  };
+
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
+    errorInfo
+  ) => {
+    console.log('Failed:', errorInfo);
+  };
+  return (
+    <Form
+      className="container"
+      layout="vertical"
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+    >
+      {contextholder}
+      <Typography.Title>Login</Typography.Title>
+      <Form.Item<FieldType>
+        label="Email"
+        name="email"
+        rules={[{ required: true, message: 'Please input your username!' }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item<FieldType>
+        label="Password"
+        name="password"
+        rules={[{ required: true, message: 'Please input your password!' }]}
+      >
+        <Input.Password />
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+      <div>
+        Don't have an account <Link to="/register">Sign up</Link>
       </div>
-      <div className="signin-btn">
-        <Button type="primary">Sign In</Button>
-      </div>
-      <Text>Quick Sign-in:</Text>
-      <Button type="primary">Sign in with Google</Button>
-      <Button type="primary">Sign in with Facebook</Button>
-    </div>
+    </Form>
   );
 }
 

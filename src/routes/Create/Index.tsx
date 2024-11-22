@@ -1,107 +1,100 @@
 import './index.css';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
-import { Form, Input, Button } from 'antd';
-import { Authenticated } from '../../Components/Authenticated';
+import { Form, Input, Button, notification } from 'antd';
 import { useEffect, useState } from 'react';
 import supabase from '../../utils/supabase';
 import { useNavigate } from 'react-router-dom';
+import { CreateForm } from './CreateForm';
+import type { FormProps } from 'antd';
+import { Authenticated } from '../../Components/Authenticated';
 const { TextArea } = Input;
 
 function Create() {
   const navigate = useNavigate();
-  const [question, setQuestion] = useState('');
-  const [url, setUrl] = useState('');
-  const [userId, setUserId] = useState(null); // Set user ID at the top level
+  const [userId, setUserId] = useState(null);
   const [session, setSession] = useState(null);
+  const [api, contextholder] = notification.useNotification();
 
-  function captureQuestion(e) {
-    const text = e.target.value; // Corrected to capture the value
-    setQuestion(text);
-  }
+  type FieldType = {
+    question: string;
+    url?: string;
+  };
 
-  function captureUrl(e) {
-    const urlLink = e.target.value;
-    setUrl(urlLink);
-  }
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    console.log('Success:', values);
+    //we need supbase to verify current user
+    try {
+      let error;
+      if (userId && values.question) {
+        error = await supabase.from('polls').insert({
+          question: values.question,
+          user_id: userId,
+          url: values.url,
+        });
+        api.open({ type: 'success', message: 'Question Successfully Posted!' });
+        navigate('/main');
+      } else {
+        console.log(userId);
+        error = 'User not logged in or question empty';
+      }
 
-  async function submitQuestion() {
-    console.log(question); // Logs the question to the console
-    let error;
-    if (userId && question) {
-      error = await supabase
-        .from('polls')
-        .insert({ question: question, user_id: userId, url: url });
-
-      navigate('/main');
-    } else {
-      error = 'User not logged in or question empty';
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(`Question Added! ${values.question}`);
+      }
+    } catch (e) {
+      console.log('Create question failed', e);
     }
+  };
 
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(`Question Added! ${question}`);
-    }
-  }
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
+    errorInfo
+  ) => {
+    console.log('Failed:', errorInfo);
+  };
 
   useEffect(() => {
     async function fetchUserId() {
-      // Fetch the current session on component mount
+      // Fetch the current session
       const { data: sessionData } = await supabase.auth.getSession();
       setSession(sessionData?.session);
-
-      // Set the user ID if a session exists
-      if (sessionData?.session?.user?.id) {
-        setUserId(sessionData.session.user.id);
-      }
-
-      // Listen for session changes (e.g., login, logout)
-      const { data: authListener } = supabase.auth.onAuthStateChange(
-        (_event, updatedSession) => {
-          setSession(updatedSession);
-
-          // Update the user ID when the session changes
-          if (updatedSession?.user?.id) {
-            setUserId(updatedSession.user.id);
-          } else {
-            setUserId(null); // Clear user ID if logged out
-          }
-        }
-      );
-
-      // Cleanup the listener on unmount
-      return () => {
-        authListener?.unsubscribe();
-      };
+      setUserId(sessionData?.session?.user?.id);
     }
     fetchUserId();
   }, []);
+
   return (
-    <>
+    <Authenticated>
+      {contextholder}
       <Header />
       <div className="form-container">
-        <Form layout="horizontal">
-          <Form.Item label="Question">
-            <TextArea onChange={captureQuestion} rows={2} />
+        <Form
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          layout="horizontal"
+        >
+          <Form.Item
+            label="Question"
+            name="question"
+            rules={[{ required: true, message: 'Please input a question!' }]}
+          >
+            <TextArea rows={2} />
           </Form.Item>
-          <Form.Item label="Image / Video Link">
-            <Input onChange={captureUrl} placeholder="https://imagelink.jpg" />
+          <Form.Item name="url" label="Image / Video Link">
+            <Input placeholder="https://imagelink.jpg" />
           </Form.Item>
-          <Authenticated>
-            <Form.Item>
-              <Authenticated>
-                {/* Corrected onClick event */}
-                <Button onClick={submitQuestion} type="primary">
-                  Submit
-                </Button>
-              </Authenticated>
-            </Form.Item>
-          </Authenticated>
+
+          <Form.Item>
+            <Button htmlType="submit" type="primary">
+              Submit
+            </Button>
+          </Form.Item>
         </Form>
       </div>
       <Footer />
-    </>
+    </Authenticated>
   );
 }
 

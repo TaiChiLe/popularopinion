@@ -7,7 +7,6 @@ import {
   notification,
   Select,
 } from 'antd';
-import { Authenticated } from '../../Components/Authenticated';
 import './Index.css';
 import { useEffect, useState } from 'react';
 import supabase from '../../utils/supabase';
@@ -17,6 +16,7 @@ import Footer from '../../Components/Footer';
 import Header from '../../Components/Header';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { Authenticated } from '../../Components/Authenticated';
 dayjs.extend(customParseFormat);
 
 function Onboarding() {
@@ -63,7 +63,6 @@ function Onboarding() {
         }
         setUserData(data);
 
-        // Update form values when userData is fetched
         form.setFieldsValue({
           firstname: data.firstname,
           lastname: data.lastname,
@@ -98,6 +97,7 @@ function Onboarding() {
       })
       .then(() => {
         notification.success({
+          type: 'success',
           message: 'User information updated',
         });
         navigate('/main');
@@ -105,50 +105,48 @@ function Onboarding() {
   };
 
   return (
-    <>
+    <Authenticated>
       <Header />
-      <Authenticated>
-        <div className="onboarding-container">
-          <h1>Onboarding</h1>
-          <Form
-            form={form} // Attach the form instance
-            layout="vertical"
-            onFinish={onFinish}
-          >
-            <Form.Item<FieldType> label="Display Name" name="displayname">
-              <Input placeholder="SlickWick" />
-            </Form.Item>
-            <Form.Item<FieldType> label="First Name" name="firstname">
-              <Input placeholder="John" />
-            </Form.Item>
-            <Form.Item<FieldType> label="Last Name" name="lastname">
-              <Input placeholder="Wick" />
-            </Form.Item>
-            <Form.Item<FieldType> label="Email" name="email">
-              <Input placeholder="SlickWick@gmail.com" />
-            </Form.Item>
-            <Form.Item<FieldType> label="Date of birth" name="dob">
-              <DatePicker format="DD/MM/YYYY" />
-            </Form.Item>
-            <Form.Item<FieldType> label="Location" name="location">
-              <Select>
-                {countries?.map((country) => (
-                  <Select.Option key={country.cca3} value={country.name.common}>
-                    {country.name.common}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      </Authenticated>
+      <div className="onboarding-container">
+        <h1>Onboarding</h1>
+        <Form
+          form={form} // Attach the form instance
+          layout="vertical"
+          onFinish={onFinish}
+        >
+          <Form.Item<FieldType> label="Display Name" name="displayname">
+            <Input placeholder="SlickWick" />
+          </Form.Item>
+          <Form.Item<FieldType> label="First Name" name="firstname">
+            <Input placeholder="John" />
+          </Form.Item>
+          <Form.Item<FieldType> label="Last Name" name="lastname">
+            <Input placeholder="Wick" />
+          </Form.Item>
+          <Form.Item<FieldType> label="Email" name="email">
+            <Input placeholder="SlickWick@gmail.com" />
+          </Form.Item>
+          <Form.Item<FieldType> label="Date of birth" name="dob">
+            <DatePicker format="DD/MM/YYYY" />
+          </Form.Item>
+          <Form.Item<FieldType> label="Location" name="location">
+            <Select>
+              {countries?.map((country) => (
+                <Select.Option key={country.cca3} value={country.name.common}>
+                  {country.name.common}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
       <Footer />
-    </>
+    </Authenticated>
   );
 }
 
