@@ -13,7 +13,6 @@ const { TextArea } = Input;
 function Create() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
-  const [session, setSession] = useState(null);
   const [api, contextholder] = notification.useNotification();
 
   type FieldType = {
@@ -59,7 +58,6 @@ function Create() {
     async function fetchUserId() {
       // Fetch the current session
       const { data: sessionData } = await supabase.auth.getSession();
-      setSession(sessionData?.session);
       setUserId(sessionData?.session?.user?.id);
     }
     fetchUserId();

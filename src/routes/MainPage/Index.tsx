@@ -5,13 +5,15 @@ import './Index.css';
 import supabase from '../../utils/supabase';
 import { isFormElement } from 'react-router-dom/dist/dom';
 import { Authenticated } from '../../Components/Authenticated';
-import { Image } from 'antd';
+import { Image, notification } from 'antd';
 
 function MainPage() {
   const [polls, setPolls] = useState([]);
   const [votes, setVotes] = useState([]);
   const [userId, setUserId] = useState(null);
   const [session, setSession] = useState(null);
+  const [api, contextholder] = notification.useNotification();
+
   const backgroundUrl =
     'https://plus.unsplash.com/premium_photo-1672201106204-58e9af7a2888?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3JhZGllbnR8ZW58MHx8MHx8fDA%3D';
 
@@ -62,9 +64,17 @@ function MainPage() {
 
     if (error) {
       console.error('Error upserting vote:', error);
+      api.open({
+        type: 'error',
+        message: 'Vote Failed',
+      });
     } else {
       const { data: updatedVotes } = await supabase.from('votes').select();
       if (updatedVotes) setVotes(updatedVotes);
+      api.open({
+        type: 'success',
+        message: 'Vote Successful',
+      });
     }
   }
 
@@ -84,6 +94,7 @@ function MainPage() {
 
   return (
     <Authenticated>
+      {contextholder}
       <Header />
       <div className="main-page-container">
         {polls.map((poll) => {
