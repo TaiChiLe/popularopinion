@@ -5,10 +5,10 @@ import { Form, Input, Button, notification } from 'antd';
 import { useEffect, useState } from 'react';
 import supabase from '../../utils/supabase';
 import { useNavigate } from 'react-router-dom';
-import { CreateForm } from './CreateForm';
 import type { FormProps } from 'antd';
 import { Authenticated } from '../../Components/Authenticated';
 const { TextArea } = Input;
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 function Create() {
   const navigate = useNavigate();
@@ -26,13 +26,55 @@ function Create() {
     try {
       let error;
       if (userId && values.question) {
-        error = await supabase.from('polls').insert({
-          question: values.question,
-          user_id: userId,
-          url: values.url,
-        });
-        api.open({ type: 'success', message: 'Question Successfully Posted!' });
-        navigate('/main');
+        const voteOptions = values.voteOptions;
+        supabase
+          .rpc('insert_polls', {
+            question: values.question,
+            user_id: userId,
+            url: values.url || '',
+          })
+          .then((data) => {
+            console.log('Question ID:', data.data);
+            const pollId = data.data;
+            if (!data.error) {
+              if (voteOptions) {
+                console.log('VoteOptions:', voteOptions);
+                voteOptions.map((voteOption) => {
+                  supabase
+                    .rpc('insert_poll_options', {
+                      poll_id: pollId,
+                      option_text: voteOption,
+                    })
+                    .then((data2) => {
+                      if (!data2.error) {
+                        notification.success({
+                          type: 'success',
+                          message: 'Question Options Added',
+                        });
+                      } else {
+                        console.log('Error', data2.error);
+                        notification.error({
+                          type: 'error',
+                          message: 'Question Options Not Added',
+                        });
+                      }
+                    });
+                  console.log('Vote Options Added:', voteOption);
+                });
+              }
+              notification.success({
+                type: 'success',
+                message: 'Question Added',
+              });
+
+              navigate('/main');
+            } else {
+              notification.error({
+                type: 'error',
+                message: 'Question Not Added',
+              });
+            }
+          });
       } else {
         console.log(userId);
         error = 'User not logged in or question empty';
@@ -83,6 +125,67 @@ function Create() {
           <Form.Item name="url" label="Image / Video Link">
             <Input placeholder="https://imagelink.jpg" />
           </Form.Item>
+
+          <Form.List
+            name="voteOptions"
+            rules={[
+              {
+                validator: async (_, voteOptions) => {
+                  if (voteOptions?.length == 1) {
+                    return Promise.reject(new Error('At least 2 vote options'));
+                  }
+                },
+              },
+            ]}
+          >
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Form.Item
+                    label={index === 0 ? 'Voting Options' : ''}
+                    required={false}
+                    key={field.key}
+                  >
+                    <Form.Item
+                      {...field}
+                      validateTrigger={['onChange', 'onBlur']}
+                      rules={[
+                        {
+                          required: true,
+                          whitespace: true,
+                          message: 'Please input option or delete this field.',
+                        },
+                      ]}
+                      noStyle
+                    >
+                      <Input
+                        placeholder="Voting Option"
+                        style={{ width: '60%' }}
+                      />
+                    </Form.Item>
+                    {fields.length > 0 ? (
+                      <MinusCircleOutlined
+                        className="dynamic-delete-button"
+                        onClick={() => remove(field.name)}
+                      />
+                    ) : null}
+                  </Form.Item>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    style={{ width: '60%' }}
+                    icon={<PlusOutlined />}
+                  >
+                    Add Voting Option
+                  </Button>
+
+                  <Form.ErrorList errors={errors} />
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
 
           <Form.Item>
             <Button htmlType="submit" type="primary">
