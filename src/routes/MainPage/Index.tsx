@@ -11,7 +11,7 @@ export function MainPage() {
 
   useEffect(() => {
     async function getPolls() {
-      const { data } = await supabase.from('polls').select();
+      const { data } = await supabase.from('posts').select();
       setPolls(data);
     }
 
