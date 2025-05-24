@@ -1,0 +1,73 @@
+1. your post settings need to be consistent
+{
+    "type": "multiple_options",
+    "options": [
+        {
+            "label": "Choice A",
+        },
+        {
+            "label": "Choice B
+        }
+    ],
+    "allow_multiple_selection": boolean // 
+    "ui": {
+        
+    }
+}
+
+
+
+--- vote data
+{
+    user_id: 01,
+    post_id: 100,
+    data: {
+        value: 1 // mapping to index 1 of the options
+    }
+}
+
+templates, when ppl want to create a new post, show them some default templates
+---> Template for the options
+{
+    "type": "multiple_options",
+    "options": [
+        {
+            "label": ":thumbup",
+        },
+        {
+            "label": ":thumbdown"
+        }
+    ]
+}
+
+{
+    "type": "multiple_options",
+    "options": [
+        {
+            "label": "Yes",
+        },
+        {
+            "label": "No"
+        }
+    ]
+}
+
+
+{
+    type: "text"
+}
+
+{
+    type: "range",
+    max_score: 10
+    options: [
+        {
+            label: "fire_emoji"
+        }
+    ],
+    display_as_number: true,
+    step: 1
+} //0 - 1 -2 -3 
+
+
+Analytics, show user the chart, try to keep information neutral

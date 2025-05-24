@@ -1,0 +1,25 @@
+.calc-button {
+    width: 85px
+}
+
+.container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 340px;
+}
+
+.input-box {
+    text-align: end;
+    height: 60px;
+    padding-top: 30px;
+}
+
+.equation-text {
+    position: inherit;
+    top: 25px;
+    text-align: end;
+    padding-right: 10px;
+    z-index: 1;
+}

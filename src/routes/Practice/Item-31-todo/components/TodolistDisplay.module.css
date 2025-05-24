@@ -1,0 +1,23 @@
+.card {
+    position: inherit;
+    width: 300px;
+}
+
+.button {
+    position: relative;
+    top: 30px;
+    right: -270px;
+}
+
+.menu {
+    position: relative;
+    top: 50px;
+    right: -300px;
+    width: 100px;
+    border-radius: 5px;
+    height: 0px;
+}
+
+.hidden {
+    display: none;
+}

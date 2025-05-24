@@ -1,7 +1,8 @@
-.form-container {
-    margin-top: 140px;
+.container {
     display: flex;
     align-items: center;
-    align-content: center;
     justify-content: center;
+    margin: 20px auto;
+    width: 500px;
+    gap: 20px;
 }
