@@ -1,9 +1,0 @@
-.container {
-    display: flex;
-    flex-direction: row;
-}
-
-.tag-section {
-    width: 200px;
-    margin: 0px 20px;
-}

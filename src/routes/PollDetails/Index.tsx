@@ -17,10 +17,9 @@ export function PollDetails(props) {
   const [votes, setVotes] = useState([]);
   const [userId, setUserId] = useState(null);
   const [session, setSession] = useState(null);
-  const [postMeta, setPostMetadata] = useState([]);
+  const [postMetadata, setPostMetadata] = useState([]);
   const [api, contextholder] = notification.useNotification();
-  const [binary, setBinary] = useState(false);
-  const [singleChoice, setSingleChoice] = useState(false);
+  let single_vote: boolean = false;
 
   const backgroundUrl =
     'https://plus.unsplash.com/premium_photo-1672201106204-58e9af7a2888?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3JhZGllbnR8ZW58MHx8MHx8fDA%3D';
@@ -35,8 +34,7 @@ export function PollDetails(props) {
       const { data: votesData } = await supabase
         .from('votes')
         .select()
-        .eq('post_id', id)
-        .eq('user_id', userId);
+        .eq('post_id', id);
       const { data: postMetadata } = await supabase
         .from('post_metadata')
         .select()
@@ -50,12 +48,11 @@ export function PollDetails(props) {
       console.log('VotesData', votesData);
       console.log('postMedata', postMetadata);
 
-      if (postsData[0].type === 'binary') {
-        setBinary(true);
-        console.log('Binary Vote', binary);
-      } else if (postsData[0].type === 'single') {
-        setSingleChoice(true);
-        console.log('Single-choice', singleChoice);
+      if (postsData[0].type === 'single-vote') {
+        single_vote = true;
+        console.log('SingleVote', single_vote);
+      } else {
+        console.log('SingleVote', single_vote);
       }
     }
 
@@ -75,10 +72,9 @@ export function PollDetails(props) {
     const { data } = await supabase
       .from('votes')
       .select()
-      .eq('post_id', vote_id)
       .eq('user_id', userId);
     let voteExists = false;
-    let totalVotes = postMeta[0].vote_count;
+    let totalVotes = postMetadata[0].vote_count;
     let currentVote;
 
     console.log('total votes', totalVotes);
@@ -101,20 +97,20 @@ export function PollDetails(props) {
         console.log("Current vote doesn't match new vote");
         if (vote_choice) {
           metadata = {
-            no_votes: postMeta[0].metadata.no_votes - 1,
-            yes_votes: postMeta[0].metadata.yes_votes + 1,
+            no_votes: postMetadata[0].metadata.no_votes - 1,
+            yes_votes: postMetadata[0].metadata.yes_votes + 1,
           };
         } else {
           metadata = {
-            no_votes: postMeta[0].metadata.no_votes + 1,
-            yes_votes: postMeta[0].metadata.yes_votes - 1,
+            no_votes: postMetadata[0].metadata.no_votes + 1,
+            yes_votes: postMetadata[0].metadata.yes_votes - 1,
           };
         }
       } else {
         console.log('Current vote matches new vote');
         metadata = {
-          no_votes: postMeta[0].metadata.no_votes,
-          yes_votes: postMeta[0].metadata.yes_votes,
+          no_votes: postMetadata[0].metadata.no_votes,
+          yes_votes: postMetadata[0].metadata.yes_votes,
         };
       }
     } else {
@@ -124,13 +120,13 @@ export function PollDetails(props) {
       totalVotes++;
       if (vote_choice) {
         metadata = {
-          no_votes: postMeta[0].metadata.no_votes,
-          yes_votes: postMeta[0].metadata.yes_votes + 1,
+          no_votes: postMetadata[0].metadata.no_votes,
+          yes_votes: postMetadata[0].metadata.yes_votes + 1,
         };
       } else {
         metadata = {
-          no_votes: postMeta[0].metadata.no_votes + 1,
-          yes_votes: postMeta[0].metadata.yes_votes,
+          no_votes: postMetadata[0].metadata.no_votes + 1,
+          yes_votes: postMetadata[0].metadata.yes_votes,
         };
       }
     }
@@ -141,34 +137,41 @@ export function PollDetails(props) {
       meta_post_id: vote_id,
     });
 
-    let votes_data = {};
-    if (vote_choice) {
-      votes_data = {
-        choice: 'yes',
-      };
-    } else {
-      votes_data = {
-        choice: 'no',
-      };
-    }
-    const { error: error2 } = await supabase.rpc('upsert_votes', {
-      votes_data: votes_data,
-      votes_post_id: vote_id,
-      votes_user_id: userId,
-    });
-
-    if (error2) {
-      console.error('Error upserting vote:', error2);
-      api.open({
-        type: 'error',
-        message: 'Vote Failed',
+    if (currentVote != vote_choice) {
+      console.log("Current vote doesn't match new vote");
+      let votes_data = {};
+      if (vote_choice) {
+        votes_data = {
+          choice: 'yes',
+        };
+      } else {
+        votes_data = {
+          choice: 'no',
+        };
+      }
+      const { error: error2 } = await supabase.rpc('upsert_votes', {
+        votes_data: votes_data,
+        votes_post_id: vote_id,
+        votes_user_id: userId,
       });
-    } else {
-      const { data: postMetadata } = await supabase
-        .from('post_metadata')
-        .select()
-        .eq('post_id', id);
-      if (postMetadata) setPostMetadata(postMetadata);
+
+      if (error2) {
+        console.error('Error upserting vote:', error2);
+        api.open({
+          type: 'error',
+          message: 'Vote Failed',
+        });
+      } else {
+        const { data: postMetadata } = await supabase
+          .from('post_metadata')
+          .select()
+          .eq('post_id', id);
+        if (postMetadata) setPostMetadata(postMetadata);
+        api.open({
+          type: 'success',
+          message: 'Vote Successful',
+        });
+      }
     }
 
     if (error) {
@@ -204,36 +207,41 @@ export function PollDetails(props) {
     return null;
   }
 
-  async function handleSingleChoiceVote(postId, votedIndex) {
-    let voted = false;
-    const data = {
-      choice: votedIndex,
-    };
-
+  async function handleMultiVote(votedOptionId) {
+    console.log(votedOptionId);
     const voteData = {
-      user_id: userId,
-      post_id: postId,
-      data: data,
+      votes_user_id: userId,
+      votes_id: id,
+      option_id: votedOptionId,
     };
 
-    console.log('VoteData', voteData);
-    //check if user has voted on the question
+    console.log('VotesDate', voteData);
 
-    //upsert votes
-    supabase.rpc('upsert_votes', { data: voteData }).then((data) => {
-      // success
-    });
+    const { error } = await supabase.rpc('upsert_multi_votes', voteData);
 
-    //update metadata
+    if (error) {
+      console.error('Error upserting vote:', error);
+      api.open({
+        type: 'error',
+        message: 'Vote Failed',
+      });
+    } else {
+      const { data: updatedVotes } = await supabase.from('votes').select();
+      if (updatedVotes) setVotes(updatedVotes);
+      api.open({
+        type: 'success',
+        message: 'Vote Successful',
+      });
+    }
   }
 
   return (
     <Authenticated>
       {contextholder}
-      {posts.map((post) => {
-        const youTubeEmbedUrl = getYouTubeEmbedUrl(post.settings.url);
+      {posts.map((poll) => {
+        const youTubeEmbedUrl = getYouTubeEmbedUrl(poll.url);
         return (
-          <div className="post" key={post.id}>
+          <div className="post" key={poll.id}>
             {youTubeEmbedUrl ? (
               <iframe
                 width="100%"
@@ -249,58 +257,48 @@ export function PollDetails(props) {
                 <Image
                   className="post-background"
                   preview={false}
-                  src={`${post.settings.url || backgroundUrl}`}
+                  src={`${poll.settings.image_url || backgroundUrl}`}
                 ></Image>
-                <div className="post-question">{post.title}</div>
+                <div className="post-question">{poll.title}</div>
               </div>
             )}
             <div>
               <div className="vote-results">
-                Current Votes Total: {postMeta[0].vote_count}
+                Current Votes Total: {postMetadata[0].vote_count}
               </div>
 
-              {binary ? (
-                <>
-                  <div className="vote-results">
-                    Current Votes {posts[0].settings.options[0].label}:{' '}
-                    {postMeta[0].metadata.data[0]}
-                  </div>
-                  <div className="vote-results">
-                    Current Votes {posts[0].settings.options[1].label}:{' '}
-                    {postMeta[0].metadata.data[1]}
-                  </div>
-                </>
-              ) : singleChoice ? (
+              {single_vote ? (
                 <></>
               ) : (
-                <></>
+                <>
+                  <div className="vote-results">
+                    Current Votes Up: {postMetadata[0].metadata.yes_votes}
+                  </div>
+                  <div className="vote-results">
+                    Current Votes Down: {postMetadata[0].metadata.no_votes}
+                  </div>
+                </>
               )}
 
-              {binary ? (
+              {single_vote ? (
+                <div className="poll-option-btn-wrapper">
+                  {postMetadata.map((options) => (
+                    <Button onClick={() => handleMultiVote(options.id)}>
+                      {options.option_text}
+                    </Button>
+                  ))}
+                </div>
+              ) : (
                 <div className="vote-btns">
                   <i
                     className="bi bi-hand-thumbs-up vote-btn"
-                    onClick={() => handleVote(binary.id, true)}
+                    onClick={() => handleVote(poll.id, true)}
                   ></i>
                   <i
                     className="bi bi-hand-thumbs-down vote-btn"
-                    onClick={() => handleVote(post.id, false)}
+                    onClick={() => handleVote(poll.id, false)}
                   ></i>
                 </div>
-              ) : singleChoice ? (
-                <div className="poll-option-btn-wrapper">
-                  {posts.map((post) =>
-                    post.settings.options.map((voteChoice, index) => (
-                      <Button
-                        onClick={() => handleSingleChoiceVote(post.id, index)}
-                      >
-                        {voteChoice.label}: {postMeta[0].metadata.data[index]}
-                      </Button>
-                    ))
-                  )}
-                </div>
-              ) : (
-                <></>
               )}
             </div>
           </div>

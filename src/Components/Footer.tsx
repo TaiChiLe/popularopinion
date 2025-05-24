@@ -1,13 +1,7 @@
-import { Button } from 'antd';
 import './style.css';
 import { useNavigate } from 'react-router-dom';
 
-type FooterProps = {
-  title: any;
-  click: () => void;
-};
-
-function Footer(props: FooterProps) {
+function Footer() {
   const navigate = useNavigate();
   return (
     <div className="footer">
